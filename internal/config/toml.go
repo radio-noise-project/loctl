@@ -6,7 +6,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-func ConfigEncode(address string, port int, filePath string) error{
+func ConfigEncode(address string, port int, filePath string) error {
 	file, err := os.Create(filePath)
 	if err != nil {
 		return err
@@ -25,4 +25,13 @@ func ConfigEncode(address string, port int, filePath string) error{
 	}
 
 	return nil
+}
+
+func ConfigDecode(filePath string) (map[string]ConfigureSetting, error) {
+	conf := map[string]ConfigureSetting{}
+	_, err := toml.DecodeFile(filePath, &conf)
+	if err != nil {
+		return nil, err
+	}
+	return conf, nil
 }
