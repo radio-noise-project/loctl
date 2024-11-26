@@ -19,7 +19,7 @@ func TestConfigEncode(t *testing.T) {
 	testConf := map[string]ConfigureSetting{}
 	_, err = toml.DecodeFile(path, &testConf)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("excepted no error; but got %v", err)
 	}
 
 	if testConf["LastOrder"].LastOrderIpAddress != address {
