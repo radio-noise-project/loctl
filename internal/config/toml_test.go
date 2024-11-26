@@ -15,7 +15,6 @@ func TestConfigEncode(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	//var testConf ConfigureSetting
 	testConf := map[string]ConfigureSetting{}
 	_, err = toml.DecodeFile(path, &testConf)
 	if err != nil {
