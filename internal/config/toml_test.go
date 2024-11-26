@@ -2,21 +2,17 @@ package config
 
 import (
 	"testing"
-
-	"github.com/BurntSushi/toml"
 )
 
-func TestConfigEncode(t *testing.T) {
+func TestMain(t *testing.T) {
 	address := "localhost"
 	port := 8080
 	path := "testdata/config.toml"
 	err := ConfigEncode(address, port, path)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("excepted no error; but got %v", err)
 	}
-
-	testConf := map[string]ConfigureSetting{}
-	_, err = toml.DecodeFile(path, &testConf)
+	testConf, err := ConfigDecode(path)
 	if err != nil {
 		t.Fatalf("excepted no error; but got %v", err)
 	}
@@ -26,5 +22,24 @@ func TestConfigEncode(t *testing.T) {
 	}
 	if testConf["LastOrder"].LastOrderPort != port {
 		t.Errorf("excepted port = %d; but got %d", port, testConf["LastOrder"].LastOrderPort)
+	}
+}
+
+func TestConfigEncode(t *testing.T) {
+	address := "localhost"
+	port := 8080
+	path := "testdata/config.toml"
+
+	err := ConfigEncode(address, port, path)
+	if err != nil {
+		t.Fatalf("excepted no error; but got %v", err)
+	}
+}
+
+func TestConfigDecode(t *testing.T) {
+	path := "testdata/config.toml"
+	_, err := ConfigDecode(path)
+	if err != nil {
+		t.Fatalf("excepted no error; but god %v", err)
 	}
 }
