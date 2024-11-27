@@ -36,11 +36,15 @@ func getConfigurationFilePath(osName string, host string, port int) error {
 				}
 			}
 		}
+
 		configDirPath := filepath.Join(xdg, "loctl")
-		err = os.Mkdir(configDirPath, unixPerms)
-		if err != nil {
-			return err
+		if !isDir(configDirPath) {
+			err = os.Mkdir(configDirPath, unixPerms)
+			if err != nil {
+				return err
+			}
 		}
+
 		configFilePath := filepath.Join(configDirPath, "config.toml")
 		err = ConfigEncode(host, port, configFilePath)
 		if err != nil {
