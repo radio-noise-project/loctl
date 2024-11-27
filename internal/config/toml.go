@@ -7,7 +7,7 @@ import (
 )
 
 func ConfigEncode(address string, port int, filePath string) error {
-	file, err := os.Create(filePath)
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		return err
 	}
@@ -17,7 +17,7 @@ func ConfigEncode(address string, port int, filePath string) error {
 		LastOrderIpAddress: address,
 		LastOrderPort:      port,
 	}
-	configMap := map[string]ConfigureSetting{"LastOrder": config}
+	configMap := map[string]ConfigureSetting{"lastOrder": config}
 
 	err = toml.NewEncoder(file).Encode(configMap)
 	if err != nil {

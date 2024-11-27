@@ -17,11 +17,11 @@ func TestMain(t *testing.T) {
 		t.Fatalf("excepted no error; but got %v", err)
 	}
 
-	if testConf["LastOrder"].LastOrderIpAddress != address {
-		t.Errorf("excepted address = %s; but got %s", address, testConf["LastOrder"].LastOrderIpAddress)
+	if testConf["lastOrder"].LastOrderIpAddress != address {
+		t.Errorf("excepted address = %s; but got %s", address, testConf["lastOrder"].LastOrderIpAddress)
 	}
-	if testConf["LastOrder"].LastOrderPort != port {
-		t.Errorf("excepted port = %d; but got %d", port, testConf["LastOrder"].LastOrderPort)
+	if testConf["lastOrder"].LastOrderPort != port {
+		t.Errorf("excepted port = %d; but got %d", port, testConf["lastOrder"].LastOrderPort)
 	}
 }
 
