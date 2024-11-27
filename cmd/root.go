@@ -9,12 +9,10 @@ import (
 var RootCmd = &cobra.Command{
 	Use:   "loctl",
 	Short: "A self-sufficient runtime for Last-Order",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `The control tool for Radio-Noise-Project.
+This command is connected Last-Order in your registered computer.
+And the command is provided to operate Sisters nodes via Last-Order.
+When you operate these, you have to use the command.`,
 }
 
 func Execute() {
@@ -25,5 +23,4 @@ func Execute() {
 }
 
 func init() {
-	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
