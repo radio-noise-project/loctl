@@ -9,11 +9,6 @@ import (
 
 func InitializeConfiguration(host string, port int) error {
 	osName := runtime.GOOS
-	err := getConfigurationFilePath(osName, host, port)
-	return err
-}
-
-func getConfigurationFilePath(osName string, host string, port int) error {
 	if osName == "linux" {
 		xdg := os.Getenv("XDG_CONFIG_HOME")
 
