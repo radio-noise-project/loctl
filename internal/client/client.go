@@ -23,7 +23,7 @@ func Get(client resty.Client, uri string, params map[string]string) (*resty.Resp
 	return resp, err
 }
 
-func Post(client resty.Client, uri string, params map[string]string) (*resty.Response, error) {
-	resp, err := client.R().SetQueryParams(params).Post(uri)
+func Post(client resty.Client, uri string, params map[string]string, body interface{}) (*resty.Response, error) {
+	resp, err := client.R().SetQueryParams(params).SetBody(body).Post(uri)
 	return resp, err
 }
