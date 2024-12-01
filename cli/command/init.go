@@ -3,7 +3,7 @@ package command
 import (
 	"fmt"
 
-	"github.com/radio-noise-project/loctl/internal/config"
+	initpkg "github.com/radio-noise-project/loctl/pkg/init"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ Config file is written by toml and recorded any settings in Radio-Noise-Project 
 		fmt.Scan(&addr)
 		fmt.Println("Please enter the port of Last-Order")
 		fmt.Scan(&port)
-		config.InitializeConfiguration(addr, port)
+		initpkg.InitializeConfiguration(addr, port)
 	},
 }
 
