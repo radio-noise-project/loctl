@@ -18,12 +18,12 @@ func (c Config) NewClient() *resty.Client {
 	return client
 }
 
-func Get(client resty.Client, uri string, params map[string]string) (*resty.Response, error) {
+func Get(client *resty.Client, uri string, params map[string]string) (*resty.Response, error) {
 	resp, err := client.R().SetQueryParams(params).Get(uri)
 	return resp, err
 }
 
-func Post(client resty.Client, uri string, params map[string]string, body interface{}) (*resty.Response, error) {
+func Post(client *resty.Client, uri string, params map[string]string, body interface{}) (*resty.Response, error) {
 	resp, err := client.R().SetQueryParams(params).SetBody(body).Post(uri)
 	return resp, err
 }

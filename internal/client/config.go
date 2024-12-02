@@ -3,6 +3,8 @@ package client
 import (
 	"net"
 	"strconv"
+
+	"github.com/radio-noise-project/loctl/pkg/config"
 )
 
 type Config struct {
@@ -13,13 +15,19 @@ type Config struct {
 	Token              string
 }
 
-func NewConfiguration(host string, port int, timeout int) *Config {
+func NewConfiguration() *Config {
+	config, err := config.ConfigDecode(config.GetConfigurationFilePath())
+	if err != nil {
+		panic(err)
+	}
+	host := config["lastOrder"].LastOrderIpAddress
+	port := config["lastOrder"].LastOrderPort
 	dstUrl := net.JoinHostPort(host, strconv.Itoa(port))
 	return &Config{
 		DestinationBaseUrl: host,
 		DestinationPort:    port,
-		DestinationUrl:     dstUrl,
-		Timeout:            timeout,
+		DestinationUrl:     "http://" + dstUrl,
+		Timeout:            10000,
 	}
 }
 
