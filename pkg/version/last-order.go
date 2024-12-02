@@ -18,7 +18,6 @@ func GetVersionLastOrder(config *client.Config) (string, string, string) {
 	err = json.Unmarshal(jsonResp.Body(), &resp)
 	if err != nil {
 		panic(err)
-
 	}
 
 	return resp.Version, resp.CodeName, resp.Version
