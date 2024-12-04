@@ -1,16 +1,15 @@
 package client
 
 import (
-	"time"
-
 	"github.com/go-resty/resty/v2"
 )
 
 func (c Config) NewClient() *resty.Client {
 	client := resty.New()
 	client.SetHeader("Accept", "application/json")
+	client.SetHeader("Content-Type", "application/json")
 	client.SetBaseURL(c.DestinationUrl)
-	client.SetTimeout(time.Duration(c.Timeout))
+	//client.SetTimeout(time.Duration(c.Timeout))
 	if c.Token != "" {
 		client.SetAuthToken(c.Token)
 	}
