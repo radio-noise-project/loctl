@@ -3,13 +3,15 @@ package run
 import (
 	"archive/tar"
 	"bytes"
-	"compress/gzip"
 	"io"
+	"io/fs"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/facebookgo/symwalk"
 	"github.com/radio-noise-project/loctl/internal/client"
 )
 
@@ -19,60 +21,69 @@ func StartContainer(sisterId string, dirname string) {
 }
 
 func sendTarball(sisterId string, dirname string, cli *client.Config) {
-	var buf bytes.Buffer
+	buf := new(bytes.Buffer)
 	var sendBuf bytes.Buffer
-	gzw := gzip.NewWriter(&buf)
-	tw := tar.NewWriter(gzw)
+	tw := tar.NewWriter(buf)
+	defer tw.Close()
 
-	err := filepath.Walk(dirname, func(file string, fi os.FileInfo, err error) error {
+	if err := symwalk.Walk(dirname, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		header, err := tar.FileInfoHeader(fi, file)
-		if err != nil {
-			return err
+		if info.IsDir() {
+			return nil
 		}
 
-		header.Name = filepath.ToSlash(file)
+		intake_path := strings.Replace(path, dirname, "", 1)
+		tar_mode := info.Mode()
+		tar_size := info.Size()
 
-		if err := tw.WriteHeader(header); err != nil {
-			return err
-		}
-
-		if fi.Mode().IsRegular() {
-			f, err := os.Open(file)
+		if info.Mode()&fs.ModeSymlink != 0 {
+			path_sym, err := filepath.EvalSymlinks(path)
 			if err != nil {
 				return err
 			}
-			defer f.Close()
-
-			if _, err := io.Copy(tw, f); err != nil {
+			path = path_sym
+			stat, err := os.Stat(path_sym)
+			if err != nil {
 				return err
 			}
+			tar_mode = stat.Mode()
+			tar_size = stat.Size()
+		}
+
+		if err := tw.WriteHeader(&tar.Header{
+			Name:    intake_path,
+			Mode:    int64(tar_mode),
+			ModTime: info.ModTime(),
+			Size:    tar_size,
+		}); err != nil {
+			return err
+		}
+
+		f, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		if _, err := io.Copy(tw, f); err != nil {
+			return err
 		}
 		return nil
-	})
 
-	if err != nil {
-		panic(err)
-	}
-
-	if err := tw.Close(); err != nil {
-		panic(err)
-	}
-
-	if err := gzw.Close(); err != nil {
+	}); err != nil {
 		panic(err)
 	}
 
 	writer := multipart.NewWriter(&sendBuf)
-	filewriter, err := writer.CreateFormFile("file", "test.tar.gz")
+	filewriter, err := writer.CreateFormFile("file", "file")
 	if err != nil {
 		panic(err)
 	}
 
-	io.Copy(filewriter, &buf)
+	io.Copy(filewriter, buf)
 	writer.Close()
 
 	resp, err := http.Post(cli.DestinationUrl+"/api/v0/run?sisterId="+sisterId, writer.FormDataContentType(), &sendBuf)
