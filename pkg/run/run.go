@@ -15,10 +15,10 @@ import (
 
 func StartContainer(sisterId string, dirname string) {
 	cli := client.NewConfiguration()
-	sendTarball(dirname, cli)
+	sendTarball(sisterId, dirname, cli)
 }
 
-func sendTarball(dirname string, cli *client.Config) {
+func sendTarball(sisterId string, dirname string, cli *client.Config) {
 	var buf bytes.Buffer
 	var sendBuf bytes.Buffer
 	gzw := gzip.NewWriter(&buf)
@@ -75,7 +75,7 @@ func sendTarball(dirname string, cli *client.Config) {
 	io.Copy(filewriter, &buf)
 	writer.Close()
 
-	resp, err := http.Post(cli.DestinationUrl+"/api/v0/run", writer.FormDataContentType(), &sendBuf)
+	resp, err := http.Post(cli.DestinationUrl+"/api/v0/run?sisterId="+sisterId, writer.FormDataContentType(), &sendBuf)
 	if err != nil {
 		panic(err)
 	}
